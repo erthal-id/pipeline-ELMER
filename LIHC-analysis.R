@@ -8,21 +8,13 @@ query.met <- GDCquery(project = "TCGA-LIHC",
 
 #Baixar os dados de expressão gênica das duas amostras 
 #Nesta função, legacy = FALSE também (é default)
-query.exp <- GDCquery(project = "TCGA-LIHC",
+query.exp <- GDCquery(project = "TCGA-GBM",
                       data.category = "Transcriptome Profiling",
                       data.type = "Gene Expression Quantification", 
                       workflow.type = "HTSeq - Counts",
-                      sample.type = c("Primary Tumor", "Solid Tissue Normal")
 )
 
-#Tabela com os dados do query.met
-#N de amostras -> Primary Tumor: 377
-#                 Solid Tissue Normal: 50
-#                 Total: 427
-datatable(getResults(query.met, cols = c("data_type","cases","sample_type")),
-          filter = 'top',
-          options = list(scrollX = TRUE, keys = TRUE, pageLength = 5), 
-          rownames = FALSE)
+
 
 #Tabela com os dados do query.exp
 #N de amostras -> Primary Tumor: 371
@@ -63,14 +55,6 @@ group2 <- "Solid Tissue Normal"  #Grupo2: normais
 
 ############################ Hypo analysis ###################################
 
-#Filtrando regiões hipometiladas no grupo 1 em comparação ao grupo 2.
-sig.diff.hypo <- get.diff.meth(data = LIHC.mae, group.col = "definition",
-                          group1 = group1, group2 = group2,
-                          minSubgroupFrac = 0.2, sig.dif = 0.4,
-                          diff.dir = "hypo", cores = 1,
-                          pvalue = 0.01)
-#pvalue 0.01 e sig.dif 0.3: 47620 probes
-#pvalue 0.01 e sig.dif 0.4: 32650 probes*
 
 #Volcano plot 
 TCGAVisualize_volcano(x = as.data.frame(sig.diff.hypo)[,grep("Minus",colnames(sig.diff.hypo),value = T)],
